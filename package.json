@@ -1,0 +1,32 @@
+{
+  "name": "rivet",
+  "version": "0.0.0",
+  "description": "Efficient build tool utilizing JavaScript and Node.js.",
+  "keywords": ["build", "make", "jake", "grunt", "rake"],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jaredhanson/rivet.git"
+  },
+  "bugs": {
+    "url": "http://github.com/jaredhanson/rivet/issues"
+  },
+  "author": { "name": "Jared Hanson", "email": "jaredhanson@gmail.com", "url": "http://www.jaredhanson.net/" },
+  "licenses": [ {
+    "type": "MIT",
+    "url": "http://www.opensource.org/licenses/MIT" 
+  } ],
+  "main": "./lib",
+  "bin" : { "rivet" : "./bin/rivet.js" },
+  "dependencies": {
+    "pkginfo": "0.2.x",
+    "commander": "1.x.x",
+    "debug": "0.7.x"
+  },
+  "devDependencies": {
+    "mocha": "1.x.x"
+  },
+  "scripts": {
+    "test": "NODE_PATH=lib node_modules/.bin/vows test/*-test.js test/**/*-test.js"
+  },
+  "engines": { "node": ">= 0.4.0" }
+}
