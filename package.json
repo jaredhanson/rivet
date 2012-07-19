@@ -23,10 +23,11 @@
     "debug": "0.7.x"
   },
   "devDependencies": {
-    "mocha": "1.x.x"
+    "mocha": "1.x.x",
+    "should": "1.x.x"
   },
   "scripts": {
-    "test": "NODE_PATH=lib node_modules/.bin/vows test/*-test.js test/**/*-test.js"
+    "test": "NODE_PATH=lib node_modules/.bin/mocha"
   },
   "engines": { "node": ">= 0.4.0" }
 }

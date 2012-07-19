@@ -11,6 +11,7 @@ program
   .description('execute the given tasks')
   .action(function(options, task) {
     // TODO: Figure out a scheme for passing arguments to tasks
+    //       This may be easier by switching to optimist.
     //console.dir(arguments)
     //console.dir(arguments[arguments.length - 1].parent)
     
