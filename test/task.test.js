@@ -22,27 +22,6 @@ describe('Task', function() {
     })
   })
   
-  describe('constructor with name and prereqs', function() {
-    var t = new Task('foo', ['x', 'y']);
-    
-    it('should have correct name', function() {
-      t.name.should.equal('foo');
-    })
-    it('should have prereqs', function() {
-      t._prereqs.should.be.an.instanceOf(Array);
-      t._prereqs.should.have.length(2);
-      t._prereqs[0].should.be.equal('x');
-      t._prereqs[1].should.be.equal('y');
-    })
-    it('should not have functions', function() {
-      t._fns.should.be.an.instanceOf(Array);
-      t._fns.should.have.length(0);
-    })
-    it('should not have been executed', function() {
-      t._execd.should.be.false;
-    })
-  })
-  
   describe('.prereqs with string argument', function() {
     var t = new Task('foo');
     t.prereqs('x');
