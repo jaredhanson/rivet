@@ -246,4 +246,144 @@ describe('rivet', function() {
     })
   })
   
+  describe('with task in namespace with dependency on task in grand-parent namespace', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'grand-parent-foo';
+    });
+    
+    r.namespace('bax', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'parent-foo';
+      });
+      
+      r.namespace('baz', function() {
+        r.task('foo', function() {
+          this.scratch['test'] = 'no-foo';
+        });
+        r.task('bar', '^:^:foo', function() {
+          this.scratch['test'] = this.scratch['test'] + '-bar';
+        });
+      })
+    })
+    
+    before(function(done) {
+      r.run('bax:baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in grand-parent namespace', function() {
+        r.scratch.test.should.equal('grand-parent-foo-bar');
+      })
+    })
+  })
+  
+  describe('with task in namespace with dependency on task in grand-parent namespace declared absolutely', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'grand-parent-foo';
+    });
+    
+    r.namespace('bax', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'parent-foo';
+      });
+      
+      r.namespace('baz', function() {
+        r.task('foo', function() {
+          this.scratch['test'] = 'no-foo';
+        });
+        r.task('bar', ':foo', function() {
+          this.scratch['test'] = this.scratch['test'] + '-bar';
+        });
+      })
+    })
+    
+    before(function(done) {
+      r.run('bax:baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in grand-parent namespace', function() {
+        r.scratch.test.should.equal('grand-parent-foo-bar');
+      })
+    })
+  })
+  
+  describe('with task in namespace with dependency on task in parent namespace', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'grand-parent-foo';
+    });
+    
+    r.namespace('bax', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'parent-foo';
+      });
+      
+      r.namespace('baz', function() {
+        r.task('foo', function() {
+          this.scratch['test'] = 'no-foo';
+        });
+        r.task('bar', '^:foo', function() {
+          this.scratch['test'] = this.scratch['test'] + '-bar';
+        });
+      })
+    })
+    
+    before(function(done) {
+      r.run('bax:baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in grand-parent namespace', function() {
+        r.scratch.test.should.equal('parent-foo-bar');
+      })
+    })
+  })
+  
+  describe('with task in namespace with dependency on task in parent namespace declared absolutely', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'grand-parent-foo';
+    });
+    
+    r.namespace('bax', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'parent-foo';
+      });
+      
+      r.namespace('baz', function() {
+        r.task('foo', function() {
+          this.scratch['test'] = 'no-foo';
+        });
+        r.task('bar', ':bax:foo', function() {
+          this.scratch['test'] = this.scratch['test'] + '-bar';
+        });
+      })
+    })
+    
+    before(function(done) {
+      r.run('bax:baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in grand-parent namespace', function() {
+        r.scratch.test.should.equal('parent-foo-bar');
+      })
+    })
+  })
+  
 })
