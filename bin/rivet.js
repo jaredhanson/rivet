@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var rivet = require('../')
+  , path = require('path')
   , optimist = require('optimist')
   , argv = optimist
     .usage('$0 [-f file] {options} targets')
@@ -14,7 +15,13 @@ var rivet = require('../')
 if (argv.help) {
   optimist.showHelp();
 } else if (argv.tasks) {
-  rivet.cli.tasks(argv.file, argv);
+  var file = rivet.utils.findupSync(process.cwd(), argv.file);
+  if (!file) { return console.error('No "rivet.js" file found'); }
+  process.chdir(path.dirname(file));
+  rivet.cli.tasks(file, argv);
 } else {
-  rivet.cli.exec(argv.file, argv._.length ? argv._ : [ 'default' ], argv);
+  var file = rivet.utils.findupSync(process.cwd(), argv.file);
+  if (!file) { return console.error('No "rivet.js" file found'); }
+  process.chdir(path.dirname(file));
+  rivet.cli.exec(file, argv._.length ? argv._ : [ 'default' ], argv);
 }
