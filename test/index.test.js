@@ -386,4 +386,52 @@ describe('rivet', function() {
     })
   })
   
+  // TODO: Implement test cases for running multiple tasks
+  
+  describe('running a task that does not exist', function() {
+    var err = null;
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'foo';
+    });
+    
+    before(function(done) {
+      r.run('xfoo', function(e) {
+        //if (err) return done(err);
+        err = e;
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should callback with error', function() {
+        err.should.be.an.instanceOf(Error);
+        err.message.should.be.equal('No task named "xfoo"');
+      })
+    })
+  })
+  
+  describe('running a task with dependency that does not exist', function() {
+    var err = null;
+    var r = new rivet.Rivet();
+    r.task('foo', 'xbar', function() {
+      this.scratch['test'] = 'foo';
+    });
+    
+    before(function(done) {
+      r.run('foo', function(e) {
+        //if (err) return done(err);
+        err = e;
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should callback with error', function() {
+        err.should.be.an.instanceOf(Error);
+        err.message.should.be.equal('No task named "xbar"');
+      })
+    })
+  })
+  
 })
