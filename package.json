@@ -19,7 +19,7 @@
   "bin" : { "rivet" : "./bin/rivet.js" },
   "dependencies": {
     "pkginfo": "0.2.x",
-    "commander": "1.x.x",
+    "optimist": "0.3.x",
     "debug": "0.7.x"
   },
   "devDependencies": {
