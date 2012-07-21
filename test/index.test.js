@@ -130,4 +130,120 @@ describe('rivet', function() {
     })
   })
   
+  describe('with task that has multiple dependencies declared multiple times', function() {
+    var r = new rivet.Rivet();
+    r.task('b', function() {
+      this.scratch['test'] = 'b';
+    });
+    r.task('a', function() {
+      this.scratch['test'] = this.scratch['test'] + '-a';
+    });
+    r.task('bar', ['b', 'a'], function() {
+      this.scratch['test'] = this.scratch['test'] + '-bar';
+    });
+    r.task('bar', ['b', 'a'], function() {
+      this.scratch['test'] = this.scratch['test'] + '-bar2';
+    });
+    
+    before(function(done) {
+      r.run('bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependencies once followed by both task functions', function() {
+        r.scratch.test.should.equal('b-a-bar-bar2');
+      })
+    })
+  })
+  
+  describe('with task in namespace with dependency on task in same namespace', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'no-foo';
+    });
+    
+    r.namespace('baz', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'foo';
+      });
+      r.task('bar', 'foo', function() {
+        this.scratch['test'] = this.scratch['test'] + '-bar';
+      });
+    })
+    
+    before(function(done) {
+      r.run('baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in same namespace', function() {
+        r.scratch.test.should.equal('foo-bar');
+      })
+    })
+  })
+  
+  describe('with task in namespace with dependency on task in parent namespace', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'parent-foo';
+    });
+    
+    r.namespace('baz', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'no-foo';
+      });
+      r.task('bar', '^:foo', function() {
+        this.scratch['test'] = this.scratch['test'] + '-bar';
+      });
+    })
+    
+    before(function(done) {
+      r.run('baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in parent namespace', function() {
+        r.scratch.test.should.equal('parent-foo-bar');
+      })
+    })
+  })
+  
+  describe('with task in namespace with dependency on task in parent namespace declared absolutely', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'parent-foo';
+    });
+    
+    r.namespace('baz', function() {
+      r.task('foo', function() {
+        this.scratch['test'] = 'no-foo';
+      });
+      r.task('bar', ':foo', function() {
+        this.scratch['test'] = this.scratch['test'] + '-bar';
+      });
+    })
+    
+    before(function(done) {
+      r.run('baz:bar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency in parent namespace', function() {
+        r.scratch.test.should.equal('parent-foo-bar');
+      })
+    })
+  })
+  
 })
