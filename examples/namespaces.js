@@ -11,7 +11,7 @@ module.exports = function(rivet) {
     
     // dependency is on this namespace's `hello` task.
     rivet.task('greet', 'hello', function() {
-      console.log('How are you today?');
+      console.log('How may I be of assistance?');
     });
   });
   
@@ -19,7 +19,7 @@ module.exports = function(rivet) {
     // dependency is on parent namespace's `hello` task
     // as indicated by "^" indicator
     rivet.task('greet', '^:hello', function() {
-      console.log('How are you today?');
+      console.log('How may I be of assistance?');
     });
   });
   

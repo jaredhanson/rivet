@@ -38,10 +38,56 @@ when the task completes.
 
     rivet.task('hello', function(done) {
       setTimeout(function() {
-        console.log('How are you?');
+        console.log('Hello! (in a little while)');
         done();
       }, 1000);
     });
+    
+#### Prerequisites (and The Scratch!)
+
+In many cases, a task often requires that another task execute first.  These
+are known as perquisites.  Rivet ensures that all prerequisites have been
+executed prior to any task that requires them.
+
+    rivet.task('hello', 'lookup_name', function() {
+      console.log('Hello ' + this.scratch.name + '!');
+    });
+    
+    rivet.task('lookup_name', function() {
+      this.scratch.name = 'Dave';
+    });
+
+Also demonstrated here is what's known as the "scratch".  This is a shared
+area that any task can write to or read from, making it convenient to pass data
+between tasks.
+
+#### Namespaces
+
+Tasks can be grouped into namespaces, making it easy to organize related tasks
+and limit there scope in larger projects.
+
+    rivet.namespace('formal', function() {
+      rivet.task('hello', function() {
+        console.log('Hello, sir!');
+      });
+
+      rivet.task('greet', 'hello', function() {
+        console.log('How may I be of assistance?');
+      });
+    });
+    
+Dependencies resolve within the current namespace.  Relative namespaces can be
+used to refer to parent namespaces if necessary.
+
+    rivet.namespace('informal', function() {
+      rivet.task('greet', '^:hello', function() {
+        console.log('What can I help you with?');
+      });
+    });
+
+The use of a caret (^) is used to refer to a parent namespace.  These can be
+strung together as needed.  For example, `^:^:hello` would reference the `hello`
+task in the grandparent namespace.
 
 ## Tests
 
