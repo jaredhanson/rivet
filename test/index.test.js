@@ -386,6 +386,61 @@ describe('rivet', function() {
     })
   })
   
+  describe('with multiple step target', function() {
+    var r = new rivet.Rivet();
+    r.target('foo', function() {
+      this.step(function() {
+        this.scratch['test'] = 'step1';
+      })
+      this.step(function() {
+        this.scratch['test'] = this.scratch['test'] + '-step2';
+      })
+    });
+    
+    before(function(done) {
+      r.run('foo', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke steps', function() {
+        r.scratch.test.should.equal('step1-step2');
+      })
+    })
+  })
+  
+  describe('with multiple step target with dependency', function() {
+    var r = new rivet.Rivet();
+    r.task('bar', function() {
+      this.scratch['test'] = 'bar';
+    })
+    
+    r.target('foo', 'bar', function() {
+      this.step(function() {
+        this.scratch['test'] = this.scratch['test'] + '-step1';
+      })
+      this.step(function() {
+        this.scratch['test'] = this.scratch['test'] + '-step2';
+      })
+    });
+    
+    before(function(done) {
+      r.run('foo', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency followed by steps', function() {
+        r.scratch.test.should.equal('bar-step1-step2');
+      })
+    })
+  })
+  
+  // TODO: Implement test cases for async tasks
   // TODO: Implement test cases for running multiple tasks
   
   describe('running a task that does not exist', function() {
