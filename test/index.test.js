@@ -542,6 +542,91 @@ describe('rivet', function() {
   
   // TODO: Implement test cases for running multiple tasks
   
+  describe('with task that throws an error', function() {
+    var err = null;
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      throw new Error('something is thrown')
+    });
+    
+    before(function(done) {
+      r.run('foo', function(e) {
+        //if (err) return done(err);
+        err = e;
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should callback with error', function() {
+        err.should.be.an.instanceOf(Error);
+        err.message.should.be.equal('something is thrown');
+      })
+    })
+  })
+  
+  describe('with async task that encounters an error', function() {
+    var err = null;
+    var r = new rivet.Rivet();
+    r.task('foo', function(done) {
+      var self = this;
+      process.nextTick(function() {
+        done(new Error('something is wrong'));
+      })
+    });
+    
+    before(function(done) {
+      r.run('foo', function(e) {
+        //if (err) return done(err);
+        err = e;
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should callback with error', function() {
+        err.should.be.an.instanceOf(Error);
+        err.message.should.be.equal('something is wrong');
+      })
+    })
+  })
+  
+  describe('with async task that has an async dependency that encouters an error', function() {
+    var err = null;
+    var r = new rivet.Rivet();
+    r.task('f', function(done) {
+      var self = this;
+      process.nextTick(function() {
+        done(new Error('something is wrong'));
+      })
+    });
+    r.task('foo', 'f', function(done) {
+      var self = this;
+      process.nextTick(function() {
+        self.scratch['test'] = 'foo';
+        done();
+      })
+    });
+    
+    before(function(done) {
+      r.run('foo', function(e) {
+        //if (err) return done(err);
+        err = e;
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should callback with error', function() {
+        err.should.be.an.instanceOf(Error);
+        err.message.should.be.equal('something is wrong');
+      })
+      it('should not invoke task function', function() {
+        should.equal(r.scratch.test, undefined)
+      })
+    })
+  })
+  
   describe('running a task that does not exist', function() {
     var err = null;
     var r = new rivet.Rivet();
