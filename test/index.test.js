@@ -55,6 +55,61 @@ describe('rivet', function() {
     })
   })
   
+  describe('with async task', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function(done) {
+      var self = this;
+      process.nextTick(function() {
+        self.scratch['test'] = 'foo';
+        done();
+      })
+    });
+    
+    before(function(done) {
+      r.run('foo', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency followed by task', function() {
+        r.scratch.test.should.equal('foo');
+      })
+    })
+  })
+  
+  describe('with async task that has an async dependency', function() {
+    var r = new rivet.Rivet();
+    r.task('f', function(done) {
+      var self = this;
+      process.nextTick(function() {
+        self.scratch['test'] = 'f';
+        done();
+      })
+    });
+    r.task('foo', 'f', function(done) {
+      var self = this;
+      process.nextTick(function() {
+        self.scratch['test'] = self.scratch['test'] + '-foo';
+        done();
+      })
+    });
+    
+    before(function(done) {
+      r.run('foo', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke dependency followed by task', function() {
+        r.scratch.test.should.equal('f-foo');
+      })
+    })
+  })
+  
   describe('with task that has a dependency', function() {
     var r = new rivet.Rivet();
     r.task('f', function() {
@@ -485,7 +540,6 @@ describe('rivet', function() {
     })
   })
   
-  // TODO: Implement test cases for async tasks
   // TODO: Implement test cases for running multiple tasks
   
   describe('running a task that does not exist', function() {
