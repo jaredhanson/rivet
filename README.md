@@ -46,7 +46,7 @@ when the task completes.
 #### Prerequisites (and The Scratch!)
 
 In many cases, a task often requires that another task execute first.  These
-are known as perquisites.  Rivet ensures that all prerequisites have been
+are known as prerequisites.  Rivet ensures that all prerequisites have been
 executed prior to any task that requires them.
 
     rivet.task('hello', 'lookup_name', function() {
@@ -76,7 +76,7 @@ and limit there scope in larger projects.
       });
     });
     
-Dependencies resolve within the current namespace.  Relative namespaces can be
+Prerequisites resolve within the current namespace.  Relative namespaces can be
 used to refer to parent namespaces if necessary.
 
     rivet.namespace('informal', function() {
@@ -88,6 +88,35 @@ used to refer to parent namespaces if necessary.
 The use of a caret (^) is used to refer to a parent namespace.  These can be
 strung together as needed.  For example, `^:^:hello` would reference the `hello`
 task in the grandparent namespace.
+
+#### Multi-Step Tasks
+
+A single task can be declared multiple times.  In this case, each function is
+treated as a step.  When the task is executed, each step will be invoked in
+sequence.
+
+    rivet.task('archive', function(done) {
+      copy(['app.js', 'utils.js'], 'output', done);
+    })
+    
+    rivet.task('archive', function(done) {
+      zip('output', 'output.zip', done);
+    })
+
+Rivet provides syntactic sugar in the form of "targets", which lets this be
+expressed in a form that is more clear.
+
+    rivet.target('archive', function() {
+      this.step(function(done) {
+        copy(['app.js', 'utils.js'], 'output', done);
+      })
+      this.step(function(done) {
+        zip('output', 'output.zip', done);
+      })
+    });
+
+This is an effective way to break up a set of asynchronous operations, writing
+them as if they were sequential commands.
 
 ## Tests
 
