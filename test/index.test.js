@@ -540,7 +540,51 @@ describe('rivet', function() {
     })
   })
   
-  // TODO: Implement test cases for running multiple tasks
+  describe('running multiple tasks with string argument', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'foo';
+    })
+    r.task('bar', function() {
+     this.scratch['test'] = this.scratch['test'] + '-bar';
+    })
+
+    before(function(done) {
+     r.run('foo bar', function(err) {
+       if (err) return done(err);
+       return done();
+     });
+    })
+
+    describe('result', function() {
+     it('should invoke both tasks', function() {
+       r.scratch.test.should.equal('foo-bar');
+     })
+    })
+  })
+  
+  describe('running multiple tasks with array argument', function() {
+    var r = new rivet.Rivet();
+    r.task('foo', function() {
+      this.scratch['test'] = 'foo';
+    })
+    r.task('bar', function() {
+     this.scratch['test'] = this.scratch['test'] + '-bar';
+    })
+
+    before(function(done) {
+     r.run(['foo', 'bar'], function(err) {
+       if (err) return done(err);
+       return done();
+     });
+    })
+
+    describe('result', function() {
+     it('should invoke both tasks', function() {
+       r.scratch.test.should.equal('foo-bar');
+     })
+    })
+  })
   
   describe('with task that throws an error', function() {
     var err = null;
