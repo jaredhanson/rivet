@@ -440,6 +440,51 @@ describe('rivet', function() {
     })
   })
   
+  describe('with alias to task', function() {
+    var r = new rivet.Rivet();
+    r.task('bar', function() {
+      this.scratch['test'] = 'bar';
+    })
+    r.alias('dobar', 'bar');
+    
+    before(function(done) {
+      r.run('dobar', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke aliased task', function() {
+        r.scratch.test.should.equal('bar');
+      })
+    })
+  })
+  
+  describe('with alias to multiple tasks', function() {
+    var r = new rivet.Rivet();
+    r.task('bar', function() {
+      this.scratch['test'] = 'bar';
+    })
+    r.task('foo', function() {
+      this.scratch['test'] = this.scratch['test'] + '-foo';
+    })
+    r.alias('doall', 'bar foo');
+    
+    before(function(done) {
+      r.run('doall', function(err) {
+        if (err) return done(err);
+        return done();
+      });
+    })
+    
+    describe('result', function() {
+      it('should invoke both aliased tasks', function() {
+        r.scratch.test.should.equal('bar-foo');
+      })
+    })
+  })
+  
   // TODO: Implement test cases for async tasks
   // TODO: Implement test cases for running multiple tasks
   
