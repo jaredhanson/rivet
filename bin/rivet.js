@@ -10,8 +10,6 @@ var rivet = require('../')
     .alias('h', 'help')
     .argv
 
-console.log(argv)
-
 if (argv.help) {
   optimist.showHelp();
 } else {

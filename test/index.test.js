@@ -540,6 +540,18 @@ describe('rivet', function() {
     })
   })
   
+  describe('with task description', function() {
+    var r = new rivet.Rivet();
+    r.desc('this is task foo');
+    r.task('foo', function() {
+      this.scratch['test'] = 'foo';
+    });
+    
+    it('should describe foo task', function() {
+      r._tasks['foo'].desc.should.equal('this is task foo');
+    })
+  })
+  
   describe('running multiple tasks with string argument', function() {
     var r = new rivet.Rivet();
     r.task('foo', function() {
