@@ -92,8 +92,7 @@ task in the grandparent namespace.
 #### Multi-Step Tasks
 
 A single task can be declared multiple times.  In this case, each function is
-treated as a step.  When the task is executed, each step will be invoked in
-sequence.
+additive.  When the task is executed, each step will be invoked in sequence.
 
     rivet.task('archive', function(done) {
       copy(['app.js', 'utils.js'], 'output', done);
@@ -103,8 +102,8 @@ sequence.
       zip('output', 'output.zip', done);
     })
 
-Rivet provides syntactic sugar in the form of "targets", which lets this be
-expressed in a form that is more clear.
+Rivet provides syntactic sugar in the form of "targets" and "steps", which lets
+this be expressed in a form that is more clear.
 
     rivet.target('archive', function() {
       this.step(function(done) {
@@ -117,6 +116,26 @@ expressed in a form that is more clear.
 
 This is an effective way to break up a set of asynchronous operations, writing
 them as if they were sequential commands.
+
+## FAQ
+
+##### How is Rivet different from Jake?
+
+Rivet is conceptually the same as [Jake](https://github.com/mde/jake/).  I was
+using Jake for this purpose, but ultimately found it lacking for the following
+reasons:
+
+1. Jake treats asynchronous tasks as second-class, requiring extra options to
+   enable them.  This works against the Node.js grain.
+2. Tasks are not "additive", in that they can't be redeclared.  I found that
+   this tended to result in unnecessary verbosity and nested callbacks.
+3. Prerequisites don't resolve within the containing namespace.  This limited
+   the effectiveness of using namespaces as resulted in parent namespaces being
+   peppered throughout separate files.
+
+All of these things could (and should, IMO) be fixed in Jake.  However, after
+attempting to do that, I concluded that it would be simpler to start from a
+fresh codebase where other simplifying assumptions could be made.
 
 ## Tests
 
