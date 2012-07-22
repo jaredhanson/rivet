@@ -130,12 +130,38 @@ reasons:
 2. Tasks are not "additive", in that they can't be redeclared.  I found that
    this tended to result in unnecessary verbosity and nested callbacks.
 3. Prerequisites don't resolve within the containing namespace.  This limited
-   the effectiveness of using namespaces as resulted in parent namespaces being
+   the effectiveness of using namespaces and resulted in parent namespaces being
    peppered throughout separate files.
 
 All of these things could (and should, IMO) be fixed in Jake.  However, after
 attempting to do that, I concluded that it would be simpler to start from a
 fresh codebase where other simplifying assumptions could be made.
+
+##### How is Rivet different from Grunt?
+
+[Grunt](https://github.com/cowboy/grunt) does away with prerequisites and
+centralizes configuration while tying that configuration to the type of task.
+While this approach certainly works, it doesn't suit my own personal tastes.
+
+I prefer to decouple the implementation of tasks from their configuration.
+By embracing the functional aspects of JavaScript, and setup functions
+popularized by [Connect](http://www.senchalabs.org/connect/) and [Express](http://expressjs.com/)
+middleware, it is easy to write succinct tasks with declarative, inline
+configuration.  For example:
+
+   function zip(dir, zipfile) {
+     return function(done) {
+       var command = 'zip -r ' + zipfile + ' ' + dir;
+       exec(command, done)
+     }
+   }
+   
+   task('zip_app', zip('app', 'app.zip'));
+   task('zip_plugins, zip('plugins', 'plugins.zip'));
+
+While completely subjective, I find this much more aesthetically pleasing.  This
+syntax also makes it easy to retain prerequisites, which are too useful to be
+unsupported by a build tool.
 
 ## Tests
 
