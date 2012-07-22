@@ -149,15 +149,15 @@ popularized by [Connect](http://www.senchalabs.org/connect/) and [Express](http:
 middleware, it is easy to write succinct tasks with declarative, inline
 configuration.  For example:
 
-   function zip(dir, zipfile) {
-     return function(done) {
-       var command = 'zip -r ' + zipfile + ' ' + dir;
-       exec(command, done)
-     }
-   }
+    function zip(dir, zipfile) {
+      return function(done) {
+        var command = 'zip -r ' + zipfile + ' ' + dir;
+        exec(command, done)
+      }
+    }
    
-   task('zip_app', zip('app', 'app.zip'));
-   task('zip_plugins, zip('plugins', 'plugins.zip'));
+    task('zip_app', zip('app', 'app.zip'));
+    task('zip_plugins, zip('plugins', 'plugins.zip'));
 
 While completely subjective, I find this much more aesthetically pleasing.  This
 syntax also makes it easy to retain prerequisites, which are too useful to be
