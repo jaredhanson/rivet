@@ -16,12 +16,12 @@ if (argv.help) {
   optimist.showHelp();
 } else if (argv.tasks) {
   var file = rivet.utils.findupSync(process.cwd(), argv.file);
-  if (!file) { return console.error('No "rivet.js" file found'); }
+  if (!file) { return console.error('No "tasks.js" file found'); }
   process.chdir(path.dirname(file));
   rivet.cli.tasks(file, argv);
 } else {
   var file = rivet.utils.findupSync(process.cwd(), argv.file);
-  if (!file) { return console.error('No "rivet.js" file found'); }
+  if (!file) { return console.error('No "tasks.js" file found'); }
   process.chdir(path.dirname(file));
   rivet.cli.exec(file, argv._.length ? argv._ : [ 'default' ], argv);
 }
