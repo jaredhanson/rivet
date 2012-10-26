@@ -16,7 +16,7 @@ From the command line, simply use rivet to execute a task.
 
     $ rivet hello
     
-Tasks are declared in a rivet file, by default named "rivet.js".
+Tasks are declared in a rivet file, by default named "tasks.js".
 
 #### Declaring a Task
 
