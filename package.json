@@ -1,6 +1,6 @@
 {
   "name": "rivet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Efficient build tool utilizing JavaScript and Node.js.",
   "keywords": ["build", "make", "jake", "grunt", "rake"],
   "repository": {
